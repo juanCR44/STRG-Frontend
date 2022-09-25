@@ -4,7 +4,7 @@ const baseURL4 = "http://127.0.0.1:8000/api/"
 const baseURL3 = 'https://django-stockrcgnt.herokuapp.com/api/'
 const baseURL5 = 'https://django-stockrcgnt-production.up.railway.app/api/test'
 //const baseURL = 'https://django-stckrcgnt.vercel.app/api/
-//const djangoURL = 'http://localhost:8000/djangotest'
+const djangoURL = 'http://localhost:8000/test'
 
 export async function getUsers(): Promise<any> {
     //const token = document.cookie.split('token=')[1]
@@ -52,7 +52,7 @@ export async function testing(file: any): Promise<any> {
     formdata.append('image', file)
     let value = ''
 
-    let res = await fetch(baseURL, {
+    let res = await fetch(baseURL2, {
         method: 'POST',
         //headers: { "Content-Type": "application/json" },
         // We convert the React state to JSON and send it as the POST body
@@ -61,7 +61,8 @@ export async function testing(file: any): Promise<any> {
         body: formdata,
     })
         .then(res => res.json()) //returns array of data
-        .then(res => {value = res.data}); //assign state to array res
+        //.then(res => {value = res.data}); //assign state to array res
+        .then(res => {value = res.data; console.log(res.data)});
 
     return value;
 }

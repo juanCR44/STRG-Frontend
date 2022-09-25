@@ -28,13 +28,18 @@ const Home = () => {
         if (photo) {
 
             //photo = `[${photo}]`
-            
+            console.log(photo)
+
             photo = photo!.replace(/'/g, '"')
+
             photo = '['+photo+']'
+
             //console.log(photo)
             //console.log(photo)
             photo = JSON.parse(photo)
-            console.log(photo)
+
+            
+           // console.log(photo)
             //console.log(photo![0])
             if (photo!.length > 1) {
                 let temp = []
