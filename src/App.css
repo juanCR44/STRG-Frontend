@@ -747,6 +747,7 @@ a:hover {
 .takedesc,
 .galerydesc,
 .productdesc {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -886,7 +887,9 @@ a:hover {
     width: 80%;
     padding: .5em .8em;
 }
-
+.relative{
+    position: relative;
+}
 .table-state {
     width: 20%;
     border-left: 1px solid #e1e1e1;

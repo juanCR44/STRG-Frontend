@@ -56,9 +56,7 @@ const Home = () => {
         let average = searchParams.get('average')
         let names = searchParams.get('names')
 
-        console.log('1')
         if (photo && count && average && names) {
-
             //photo = `[${photo}]`
             console.log(names)
 
@@ -89,8 +87,8 @@ const Home = () => {
             setCount(count)
             setAverage(average)
             // setImageYolo(photo)
-            removeQueryParams()
         }
+        removeQueryParams()
     }, [])
 
     /*useEffect(()=>{
@@ -429,7 +427,7 @@ const Home = () => {
                             </ul>
                             <ul className='redirect-links-mobile'>
                                 <li className="link-item" onClick={() => goPhoto()}>Tomar foto</li>
-                                <li className="link-item"><input type="file" name="image" onChange={(e) => detectUploaded(e)} /> Cargar foto</li>
+                                <li className="link-item relative"><input type="file" name="image" onChange={(e) => detectUploaded(e)} /> Cargar foto</li>
                                 <li className="link-item" onClick={() => showTypeHtml()}>Productos registrados</li>
                                 <li className='link-item'>Modificar perfil</li>
                                 <li className='link-item'>Cerrar sesión</li>
@@ -699,7 +697,7 @@ const Home = () => {
                                                         <p className="p-big mu">{productType}</p>
                                                         <div className="info-registered">
                                                             <p>Seleccione fecha</p>
-                                                            <input type="date" id="time" name="time" />
+                                                            <input onChange={(e) => onChangeDate(e)} type="date" id="time" name="time" />
                                                         </div>
                                                         <div className="info-registered">
                                                             <p>Conteo de productos</p>
@@ -865,9 +863,10 @@ const Home = () => {
                                         <span className="button button-dashboard" onClick={() => goPhoto()}>Tomar foto</span>
                                         <span className="desc desca">Solo valido para San mateo, Incakola, Monter y Redbull</span>
                                     </div>
-                                    <div className="galerydesc">
+                                    <div className="galerydesc" >
                                         <span className="button button-dashboard" >Cargar foto</span>
                                         <span className="desc descb">Elige foto de tu galería algún producto del tipo San mateo, Incakola, Monter y Redbull</span>
+                                        <input type="file" name="image" onChange={(e) => detectUploaded(e)} />
                                     </div>
                                     <div className="productdesc">
                                         <span className="button button-dashboard" onClick={() => showTypeHtml()}>Productos registrados</span>
