@@ -452,10 +452,10 @@ const Home = () => {
                                         <i className="uil uil-database"></i>
                                         <p>Productos registrados</p>
                                     </div>
-                                    <div onClick={() => testing()} className="product-registered-tablet">
+                                    {/*<div onClick={() => testing()} className="product-registered-tablet">
                                         <i className="uil uil-database"></i>
                                         <p>PRUEBA</p>
-                                    </div>
+    </div>*/}
                                 </div>
                             </div>
                             <div className="arrow-cont">
