@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import $ from 'jquery';
 import { useNavigate } from "react-router-dom";
-import { detectState, getdetection, getjango, registerDetection } from "../controller/getmodel";
+import { detect, detectState, getdetection, getjango, registerDetection } from "../controller/getmodel";
 import Detection from "../constants/detection";
 import moment from 'moment';
 
@@ -28,6 +28,7 @@ const Home = () => {
     const [fullcountdamage, setFullcountdamage] = useState<number>(0)
     const [object, setObject] = useState<any[]>([])
     const [dimage, setDimage] = useState<any>()
+    const [uploadedImage, setUploadedImage] = useState<File>()
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [imageYolo, setImageYolo] = useState<any>()
@@ -54,6 +55,8 @@ const Home = () => {
         let count = searchParams.get('count')
         let average = searchParams.get('average')
         let names = searchParams.get('names')
+
+        console.log('1')
         if (photo && count && average && names) {
 
             //photo = `[${photo}]`
@@ -144,6 +147,8 @@ const Home = () => {
         $('.overlay').removeClass('active')
         $(".colection-info-yolo").removeClass('active')
         $('.image-full').removeClass('active')
+
+        console.log('2')
     }, [])
     useEffect(() => {
         let vh = window.innerHeight * 0.01;
@@ -155,6 +160,8 @@ const Home = () => {
             let vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         });
+
+        console.log('3')
     }, [])
     useEffect(() => {
         $('.arrow-cont').on('click', function () {
@@ -200,6 +207,8 @@ const Home = () => {
                 $('.whatsapp-active').addClass('active')
             }
         })
+
+        console.log('4')
     }, [])
 
     useEffect(() => {
@@ -218,7 +227,10 @@ const Home = () => {
             $(".colection-info-yolo").removeClass('active')
             $('.image-full').removeClass('active')
         })
-    })
+
+
+        console.log('5')
+    }, [])
 
     function goPhoto() {
         navigate("/camera");
@@ -259,6 +271,51 @@ const Home = () => {
         setShowState(true)
     }
 
+    async function convertBase64(file: any) {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            }
+            fileReader.onerror = (error) => {
+                reject(error);
+            }
+        })
+    }
+
+    async function detectUploaded(e: any) {
+        let file = e.target.files[0]
+        const base64 = await convertBase64(file)
+
+        let res = await detect(base64)
+
+        let images = res.imagearr
+        let average = res.average
+        let count = res.count
+        let names = res.names
+
+        console.log(res.imagearr)
+
+        if (images!.length > 1) {
+            let temp = []
+            for (let x = 1; x < images!.length; x++) {
+                temp.push(images![x])
+            }
+            setImagesYoloCropped(temp)
+        }
+        setImageYolo(images![0])
+
+        setNames(names)
+        setCount(count)
+        setAverage(average)
+
+        setDidSelect(true)
+        $('.return').addClass('active')
+        setShowDetect(true)
+        setShowYolo(true)
+    }
+
     function goBack() {
         console.log(showYolo, showState)
         if (showState) {
@@ -285,28 +342,8 @@ const Home = () => {
             return
         }
     }
-    function dataURIToBlob(dataURI: any) {
-        dataURI = dataURI.replace(/^data:/, '');
-
-        const type = dataURI.match(/image\/[^;]+/);
-        const base64 = dataURI.replace(/^[^,]+,/, '');
-        const arrayBuffer = new ArrayBuffer(base64.length);
-        const typedArray = new Uint8Array(arrayBuffer);
-
-        for (let i = 0; i < base64.length; i++) {
-            typedArray[i] = base64.charCodeAt(i);
-        }
-
-        return new Blob([arrayBuffer], { type });
-    }
 
     async function registrarProducto() {
-        //const blob = dataURIToBlob(imageState)
-        //const imgUrl = URL.createObjectURL(blob);
-        //console.log(imgUrl)
-        //const formdata = new FormData();
-        //formdata.append('image', blob)
-
         const detection: Detection = {
             user_id: id, count: count.toString(), percentage: average.toString(), date: new Date(),
             namestate: typeText, imagestate: imageState, percentagestate: averageState.toString(), state: state
@@ -392,7 +429,7 @@ const Home = () => {
                             </ul>
                             <ul className='redirect-links-mobile'>
                                 <li className="link-item" onClick={() => goPhoto()}>Tomar foto</li>
-                                <li className="link-item">Cargar foto</li>
+                                <li className="link-item"><input type="file" name="image" onChange={(e) => detectUploaded(e)} /> Cargar foto</li>
                                 <li className="link-item" onClick={() => showTypeHtml()}>Productos registrados</li>
                                 <li className='link-item'>Modificar perfil</li>
                                 <li className='link-item'>Cerrar sesión</li>
@@ -411,6 +448,7 @@ const Home = () => {
                                     <div className="product-registered-tablet">
                                         <i className="uil uil-scenery"></i>
                                         <p>Cargar foto</p>
+                                        <input type="file" name="image" onChange={(e) => detectUploaded(e)} />
                                     </div>
                                     <div onClick={() => showTypeHtml()} className="product-registered-tablet">
                                         <i className="uil uil-database"></i>
@@ -490,23 +528,6 @@ const Home = () => {
                                                                         </div>
                                                                     )
                                                                 })}
-
-                                                                {/*<div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #1</p>
-                                                                    <i className="uil uil-check-circle table-state center-state"></i>
-                                                                </div>
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #2</p>
-                                                                    <i className="uil uil-check-circle table-state center-state"></i>
-                                                                </div>
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #3</p>
-                                                                    <i className="uil uil-times-circle table-state center-state"></i>
-                                                                </div>
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #4</p>
-                                                                    <i className="uil uil-check-circle table-state center-state"></i>
-                                                            </div>*/}
                                                             </div>
                                                         </div>
                                                     </div>
