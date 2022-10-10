@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Camera } from "react-camera-pro";
 import { createSearchParams, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { testing } from "../controller/getmodel";
+import { detect } from "../controller/getmodel";
 
 const Procamera = () => {
   const camera = useRef<any>(null);
@@ -10,7 +10,7 @@ const Procamera = () => {
   const [numberOfCameras, setNumberOfCameras] = useState(1);
   const [loading, setLoading] = useState(false)
 
-  const [ res, setRes] = useState<any>()
+  const [res, setRes] = useState<any>()
   let navigate = useNavigate();
 
   const error = {
@@ -21,30 +21,33 @@ const Procamera = () => {
     canvas: 'Canvas is not supported.'
   }
 
+  useEffect(() => {
+    if (!localStorage.getItem('id')) {
+      navigate('/')
+    }
+  }, [])
 
   async function takephoto(data: any) {
-    const photo = data.current.takePhoto();
-    setLoading(true)
-    
-    let res = await testing(photo)
-    console.log(res)
-    res = res.map((s:any) => `'${s}'`).join(',');
-    //console.log(res)
-    //res = res.replace(/'/g, '"')
-    //res = JSON.parse(res)
-    //console.log(typeof(res))
-    //console.log("ha salido!!!")
-//
-    //console.log(res)
 
-    const params = {image:res}
-    setTimeout(() => {
+      const photo = data.current.takePhoto();
+      setLoading(true)
+
+      let res = await detect(photo)
+      console.log(res)
+      let images = res.imagearr.map((s: any) => `'${s}'`).join(',');
+      let average = res.average
+      let count = res.count
+      let names = res.names.map((s: any) => `'${s}'`).join(',');
+
+      const params = { image: images, average: average, count: count, names: names }
+      setTimeout(() => {
         setLoading(false)
         navigate({
-          pathname:"/dashboard",
-          search:`?${createSearchParams(params)}`
-        }); 
-    }, 1000);
+          pathname: "/dashboard",
+          search: `?${createSearchParams(params)}`
+        });
+      }, 1000);
+    
   }
 
   function switchCam(data: any) {
@@ -55,7 +58,7 @@ const Procamera = () => {
     <div className="camera-container">
 
       {
-        !loading ?
+        (!loading && localStorage.getItem('id')) ?
           (
             <>
               <Camera ref={camera} numberOfCamerasCallback={setNumberOfCameras} errorMessages={error} />

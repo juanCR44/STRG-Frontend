@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import $ from 'jquery';
 import { useNavigate } from "react-router-dom";
-import { getjango, testing } from "../controller/getmodel";
+import { detectState, getdetection, getjango, registerDetection } from "../controller/getmodel";
+import Detection from "../constants/detection";
+import moment from 'moment';
 
 const Home = () => {
     let navigate = useNavigate();
@@ -13,33 +15,59 @@ const Home = () => {
     const [showTypes, setShowTypes] = useState<boolean>(false)
     const [showTypeRegistered, setShowTypeRegistered] = useState<boolean>(false)
     const [productType, setProducType] = useState<string>('')
+    const [productTypeJson, setProducTypeJson] = useState<string>('')
     const [stateProduct, setStateProduct] = useState<String>('')
     const [didSelectRegistered, setDidSelectRegistered] = useState<boolean>(false)
     const [typeText, setTypeText] = useState<string>('')
+    const [count, setCount] = useState<any>()
+    const [average, setAverage] = useState<any>()
+    const [averageState, setAverageState] = useState<any>()
+    const [state, setState] = useState<any>()
+    const [names, setNames] = useState<any>()
+    const [fullcount, setFullcount] = useState<number>(0)
+    const [fullcountdamage, setFullcountdamage] = useState<number>(0)
+    const [object, setObject] = useState<any[]>([])
+    const [dimage, setDimage] = useState<any>()
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [imageYolo, setImageYolo] = useState<any>()
     const [imageState, setImageState] = useState<string>('')
+    const [eproduct, setEproduct] = useState<string>('')
 
     const [imagesYoloCropped, setImagesYoloCropped] = useState<any>()
 
+    const [date, setDate] = useState<any>(new Date().toISOString().split('T')[0]);
+    const [user, setUser] = useState<string>('')
+    const [id, setId] = useState<any>()
+
     useEffect(() => {
+
+        if (!localStorage.getItem('id')) {
+            navigate('/')
+        }
+
+        setUser(localStorage.getItem('email')!)
+        setId(localStorage.getItem('id')!)
+        console.log(localStorage.getItem('email')!, localStorage.getItem('id')!)
+
         let photo = searchParams.get('image')
-        if (photo) {
+        let count = searchParams.get('count')
+        let average = searchParams.get('average')
+        let names = searchParams.get('names')
+        if (photo && count && average && names) {
 
             //photo = `[${photo}]`
-            console.log(photo)
+            console.log(names)
 
             photo = photo!.replace(/'/g, '"')
-
-            photo = '['+photo+']'
-
-            //console.log(photo)
-            //console.log(photo)
+            photo = '[' + photo + ']'
             photo = JSON.parse(photo)
 
-            
-           // console.log(photo)
+            names = names!.replace(/'/g, '"')
+            names = '[' + names + ']'
+            names = JSON.parse(names)
+
+            // console.log(photo)
             //console.log(photo![0])
             if (photo!.length > 1) {
                 let temp = []
@@ -54,6 +82,9 @@ const Home = () => {
             setShowDetect(true)
             setShowYolo(true)
             setImageYolo(photo![0])
+            setNames(names)
+            setCount(count)
+            setAverage(average)
             // setImageYolo(photo)
             removeQueryParams()
         }
@@ -72,6 +103,9 @@ const Home = () => {
         const param = searchParams.get('image');
         if (param) {
             searchParams.delete('image');
+            searchParams.delete('average')
+            searchParams.delete('count');
+            searchParams.delete('names');
             setSearchParams(searchParams);
         }
     };
@@ -210,11 +244,17 @@ const Home = () => {
         }
     }
 
-    function verifyState() {
+    async function verifyState() {
         if (imageState == '') {
             $('.button-tablet').addClass('active')
             return
         }
+
+        let res = await detectState(imageState)
+        console.log(res)
+        setAverageState(res.average)
+        setState(res.state)
+
         setShowYolo(false)
         setShowState(true)
     }
@@ -245,31 +285,65 @@ const Home = () => {
             return
         }
     }
-    function registrarProducto() {
+    function dataURIToBlob(dataURI: any) {
+        dataURI = dataURI.replace(/^data:/, '');
 
+        const type = dataURI.match(/image\/[^;]+/);
+        const base64 = dataURI.replace(/^[^,]+,/, '');
+        const arrayBuffer = new ArrayBuffer(base64.length);
+        const typedArray = new Uint8Array(arrayBuffer);
+
+        for (let i = 0; i < base64.length; i++) {
+            typedArray[i] = base64.charCodeAt(i);
+        }
+
+        return new Blob([arrayBuffer], { type });
+    }
+
+    async function registrarProducto() {
+        //const blob = dataURIToBlob(imageState)
+        //const imgUrl = URL.createObjectURL(blob);
+        //console.log(imgUrl)
+        //const formdata = new FormData();
+        //formdata.append('image', blob)
+
+        const detection: Detection = {
+            user_id: id, count: count.toString(), percentage: average.toString(), date: new Date(),
+            namestate: typeText, imagestate: imageState, percentagestate: averageState.toString(), state: state
+        }
+
+        let res = await registerDetection(detection)
+        console.log(res.ok)
     }
 
     function getTypeRegistered(type: string) {
-        console.log("je")
         setShowTypes(false)
         setShowTypeRegistered(true)
         if (type == 'sanmateo') {
             setProducType('San Mateo')
+            setProducTypeJson('SanMateo')
         }
         if (type == 'inca') {
             setProducType('IncaKola')
+            setProducTypeJson('IncaKola')
         }
         if (type == 'redbull') {
-            setProducType('RedBull')
+            setProducType('Monster sin Azucar')
+            setProducTypeJson('Monster_Sin_Azucar')
         }
         if (type == 'monster') {
-            setProducType('Monster')
+            setProducType('Monster Original')
+            setProducTypeJson('Monster_Original')
         }
     }
 
-    function selectRegistered(e: any) {
+    function selectRegistered(e: any, element: any) {
         let name = e.target.parentNode.children[0].textContent
         setStateProduct(name)
+        setEproduct(element['state'])
+        let image = element['imagestate']
+
+        setDimage(image)
         setDidSelectRegistered(true)
     }
 
@@ -278,27 +352,35 @@ const Home = () => {
         console.log(a)
     }
 
+    async function onChangeDate(e: any) {
+        console.log(e.target.value)
+        const newDate = new Date(e.target.value).toISOString().split('T')[0]
+        setDate(newDate);
+        let res = await getdetection(new Date(e.target.value), parseInt(id), productTypeJson)
+
+        if (Object.keys(res).length == 0) {
+            return
+        }
+        else {
+            let arr = JSON.parse(res)
+            let fcount = 0
+            let dcount = 0
+
+            arr.forEach((element: any) => {
+                fcount += Number(element['count'])
+                if (element['state'] == 'Malo') {
+                    dcount += 1
+                }
+            });
+
+            setObject(arr)
+            setFullcount(fcount)
+            setFullcountdamage(dcount)
+        }
+    };
+
     return (
         <>
-            {/*<div className="whatsapp">
-                <p>Cambia color</p>
-            </div>
-            <div className="whatsapp-active">
-                <div className="l">
-                    <p onClick={(e) => changeColor(e)}>fondo</p>
-                    <p onClick={(e) => changeColor(e)}>navbar</p>
-                    <p onClick={(e) => changeColor(e)}>menu</p>
-                    <p onClick={(e) => changeColor(e)}>botones</p>
-                    <p onClick={(e) => changeColor(e)}>titulo</p>
-                    <p onClick={(e) => changeColor(e)}>letras</p>
-                </div>
-                <div className="r">
-                    <SketchPicker
-                        color={color}
-                        onChange={onChangeMethod}
-                    />
-                </div>
-    </div>*/}
             <div className="stockrecognition-body2">
                 <div className="container-full">
                     <div className="navbar">
@@ -306,7 +388,7 @@ const Home = () => {
                         <div className="navbar-redirect">
                             <ul className='redirect-links'>
                                 <li><a className='link-item' href="/">Modificar perfil</a></li>
-                                <li><a className='link-item' href="/">Cerrar sesión</a></li>
+                                <li><a className='link-item' onClick={() => { localStorage.clear() }} href="/login">Cerrar sesión</a></li>
                             </ul>
                             <ul className='redirect-links-mobile'>
                                 <li className="link-item" onClick={() => goPhoto()}>Tomar foto</li>
@@ -378,15 +460,15 @@ const Home = () => {
                                                         <p className="p-big mu">{productType}</p>
                                                         <div className="info-registered">
                                                             <p>Seleccione fecha</p>
-                                                            <input type="date" id="time" name="time" />
+                                                            <input onChange={(e) => onChangeDate(e)} type="date" id="time" name="time" />
                                                         </div>
                                                         <div className="info-registered">
                                                             <p>Conteo de productos</p>
-                                                            <p className="box-p">10</p>
+                                                            <p className="box-p">{fullcount}</p>
                                                         </div>
                                                         <div className="info-registered">
                                                             <p>Productos dañados</p>
-                                                            <p className="box-p">1</p>
+                                                            <p className="box-p">{fullcountdamage}</p>
                                                         </div>
                                                         <p>Estado de productos</p>
                                                         <div className="table-container">
@@ -399,7 +481,17 @@ const Home = () => {
                                                                 </p>
                                                             </div>
                                                             <div className="table-content">
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
+                                                                {object && object.map((element: any, index: any) => {
+                                                                    return (
+                                                                        <div onClick={(e) => selectRegistered(e, element)} className="table-product" key={index}>
+                                                                            <p className="table-name">Producto #{index + 1}</p>
+                                                                            {element['state'] == 'Bueno' && <i className="uil uil-check-circle table-state center-state"></i>}
+                                                                            {element['state'] == 'Malo' && <i className="uil uil-times-circle table-state center-state"></i>}
+                                                                        </div>
+                                                                    )
+                                                                })}
+
+                                                                {/*<div onClick={(e) => selectRegistered(e)} className="table-product">
                                                                     <p className="table-name">Producto #1</p>
                                                                     <i className="uil uil-check-circle table-state center-state"></i>
                                                                 </div>
@@ -414,7 +506,7 @@ const Home = () => {
                                                                 <div onClick={(e) => selectRegistered(e)} className="table-product">
                                                                     <p className="table-name">Producto #4</p>
                                                                     <i className="uil uil-check-circle table-state center-state"></i>
-                                                                </div>
+                                                            </div>*/}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -423,14 +515,14 @@ const Home = () => {
                                                     {didSelectRegistered ?
                                                         (
                                                             <div className="container-registered-product">
-                                                                <img className="registered-image" src="image/i3.jpg" alt="" />
+                                                                <img className="registered-image" src={dimage} alt="" />
                                                                 <div className="info-registered">
                                                                     <p>Producto seleccionado</p>
                                                                     <p className="box-p">{stateProduct}</p>
                                                                 </div>
                                                                 <div className="info-registered">
                                                                     <p>Estado del producto</p>
-                                                                    <p className="box-p">Bueno</p>
+                                                                    <p className="box-p">{eproduct}</p>
                                                                 </div>
                                                             </div>
                                                         ) :
@@ -458,7 +550,7 @@ const Home = () => {
                                                                                 <p className="bold"># Detectados</p>
                                                                             </div>
                                                                             <div className="card-down">
-                                                                                <p className="p-big">6</p>
+                                                                                <p className="p-big">{count}</p>
                                                                             </div>
                                                                         </div>
                                                                         <div className="card-info">
@@ -466,7 +558,7 @@ const Home = () => {
                                                                                 <p className="bold">% Detección</p>
                                                                             </div>
                                                                             <div className="card-down">
-                                                                                <p className="p-big">85</p>
+                                                                                <p className="p-big">{average * 100}</p>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -481,37 +573,10 @@ const Home = () => {
 
                                                                                         return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
                                                                                             <img className="cropped-size" src={image} alt="" />
-                                                                                            <p>Nombre</p>
+                                                                                            <p>{names[index]}</p>
                                                                                         </div>)
 
                                                                                     })}
-
-
-                                                                                    {/*}
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i1.jpg" alt="" />
-                                                                                        <p>Inkacola 6</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i3.jpg" alt="" />
-                                                                                        <p>Redbull 1</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i2.jpg" alt="" />
-                                                                                        <p>San Mateo 1</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i1.jpg" alt="" />
-                                                                                        <p>IncaKola 2</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i2.jpg" alt="" />
-                                                                                        <p>San Mateo 2</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i2.jpg" alt="" />
-                                                                                        <p>San Mateo 3</p>
-                                                                                </div>*/}
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -547,7 +612,7 @@ const Home = () => {
                                                                                     <p className="bold">Condición</p>
                                                                                 </div>
                                                                                 <div className="card-down">
-                                                                                    <p className="p-big">Bueno</p>
+                                                                                    <p className="p-big">{state}</p>
                                                                                 </div>
                                                                             </div>
                                                                             <div className="card-info">
@@ -555,7 +620,7 @@ const Home = () => {
                                                                                     <p className="bold">% Detección</p>
                                                                                 </div>
                                                                                 <div className="card-down">
-                                                                                    <p className="p-big">95</p>
+                                                                                    <p className="p-big">{averageState}</p>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -617,11 +682,11 @@ const Home = () => {
                                                         </div>
                                                         <div className="info-registered">
                                                             <p>Conteo de productos</p>
-                                                            <p className="box-p">10</p>
+                                                            <p className="box-p">{fullcount}</p>
                                                         </div>
                                                         <div className="info-registered">
                                                             <p>Productos dañados</p>
-                                                            <p className="box-p">1</p>
+                                                            <p className="box-p">{fullcountdamage}</p>
                                                         </div>
                                                         <p>Estado de productos</p>
                                                         <div className="table-container">
@@ -634,22 +699,15 @@ const Home = () => {
                                                                 </p>
                                                             </div>
                                                             <div className="table-content">
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #1</p>
-                                                                    <i className="uil uil-check-circle table-state center-state"></i>
-                                                                </div>
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #2</p>
-                                                                    <i className="uil uil-check-circle table-state center-state"></i>
-                                                                </div>
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #3</p>
-                                                                    <i className="uil uil-times-circle table-state center-state"></i>
-                                                                </div>
-                                                                <div onClick={(e) => selectRegistered(e)} className="table-product">
-                                                                    <p className="table-name">Producto #4</p>
-                                                                    <i className="uil uil-check-circle table-state center-state"></i>
-                                                                </div>
+                                                                {object && object.map((element: any, index: any) => {
+                                                                    return (
+                                                                        <div onClick={(e) => selectRegistered(e, element)} className="table-product" key={index}>
+                                                                            <p className="table-name">Producto #{index + 1}</p>
+                                                                            {element['state'] == 'Bueno' && <i className="uil uil-check-circle table-state center-state"></i>}
+                                                                            {element['state'] == 'Malo' && <i className="uil uil-times-circle table-state center-state"></i>}
+                                                                        </div>
+                                                                    )
+                                                                })}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -658,14 +716,14 @@ const Home = () => {
                                                     {didSelectRegistered ?
                                                         (
                                                             <div className="container-registered-product">
-                                                                <img className="registered-image" src="image/i3.jpg" alt="" />
+                                                                <img className="registered-image" src={dimage} alt="" />
                                                                 <div className="info-registered">
                                                                     <p>Producto seleccionado</p>
                                                                     <p className="box-p">{stateProduct}</p>
                                                                 </div>
                                                                 <div className="info-registered">
                                                                     <p>Estado del producto</p>
-                                                                    <p className="box-p">Bueno</p>
+                                                                    <p className="box-p">{eproduct}</p>
                                                                 </div>
                                                             </div>
                                                         ) :
@@ -682,7 +740,7 @@ const Home = () => {
                                                 {
                                                     showYolo && (
                                                         <div className="row centered verify-yolo">
-                                                            <div className="left centered flex flexcolumn gap borderright padding-image">
+                                                            <div className="left centered flex flexcolumn gap borderright padding-image godown">
                                                                 <img className="product-image" src={imageYolo} alt="" />
                                                             </div>
                                                             <div className="right centered flex flexcolumn gap">
@@ -693,7 +751,7 @@ const Home = () => {
                                                                                 <p className="bold"># Detectados</p>
                                                                             </div>
                                                                             <div className="card-down">
-                                                                                <p className="p-big">6</p>
+                                                                                <p className="p-big">{count}</p>
                                                                             </div>
                                                                         </div>
                                                                         <div className="card-info">
@@ -701,7 +759,7 @@ const Home = () => {
                                                                                 <p className="bold">% Detección</p>
                                                                             </div>
                                                                             <div className="card-down">
-                                                                                <p className="p-big">85</p>
+                                                                                <p className="p-big">{average * 100}</p>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -712,30 +770,14 @@ const Home = () => {
                                                                             </div>
                                                                             <div className="card-down">
                                                                                 <div className="products-detected">
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i1.jpg" alt="" />
-                                                                                        <p>Inkacola 6</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i3.jpg" alt="" />
-                                                                                        <p>Redbull 1</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i2.jpg" alt="" />
-                                                                                        <p>San Mateo 1</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i1.jpg" alt="" />
-                                                                                        <p>IncaKola 2</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i2.jpg" alt="" />
-                                                                                        <p>San Mateo 2</p>
-                                                                                    </div>
-                                                                                    <div onClick={(e) => setProduct(e)} className="product-detected-cropped">
-                                                                                        <img className="cropped-size" src="image/i2.jpg" alt="" />
-                                                                                        <p>San Mateo 3</p>
-                                                                                    </div>
+                                                                                    {imagesYoloCropped && imagesYoloCropped.map((image: any, index: any) => {
+
+                                                                                        return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
+                                                                                            <img className="cropped-size" src={image} alt="" />
+                                                                                            <p>{names[index]}</p>
+                                                                                        </div>)
+
+                                                                                    })}
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -771,7 +813,7 @@ const Home = () => {
                                                                                     <p className="bold">Condición</p>
                                                                                 </div>
                                                                                 <div className="card-down">
-                                                                                    <p className="p-big">Bueno</p>
+                                                                                    <p className="p-big">{state}</p>
                                                                                 </div>
                                                                             </div>
                                                                             <div className="card-info">
@@ -779,7 +821,7 @@ const Home = () => {
                                                                                     <p className="bold">% Detección</p>
                                                                                 </div>
                                                                                 <div className="card-down">
-                                                                                    <p className="p-big">95</p>
+                                                                                    <p className="p-big">{averageState}</p>
                                                                                 </div>
                                                                             </div>
                                                                         </div>

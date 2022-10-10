@@ -1,11 +1,13 @@
 import $ from 'jquery';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { loginUser } from '../controller/getmodel';
 
 const LoginUser = () => {
     const [isChecked, setIsChecked] = useState<boolean>(false)
     const [password, setPassword] = useState<string>('')
     const [email, setEmail] = useState<string>('')
+    const [nombre, setNombre] = useState<string>('')
     let navigate = useNavigate();
 
     const [isValid, setIsValid] = useState<boolean>(false)
@@ -13,9 +15,9 @@ const LoginUser = () => {
     useEffect(() => {
         setEmail('')
         setPassword('')
-        $('.uil-check-circle').removeClass('active')
-        $('.uil-spinner-alt').removeClass('active')
-        $('.uil-times-circle').removeClass('active')
+        $('input').val("");
+        $('.message-pop').removeClass('active')
+        $('.message-pop2').removeClass('active')
     }, [])
     useEffect(() => {
         let vh = window.innerHeight * 0.01;
@@ -27,10 +29,12 @@ const LoginUser = () => {
             let vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         });
-    },[])
+    }, [])
 
     async function validateInput(button: any) {
         let isValid = true;
+        $('.alert_password').text('')
+        $('.alert_email').text('')
         if (password.length == 0) {
             isValid = false;
             $('.alert_password').text('Ingrese contraseña')
@@ -39,11 +43,9 @@ const LoginUser = () => {
             const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[A-Za-z0-9])(?=.*[#?!@_&-]).{6,}$/;
             if (password.length < 6) {
                 isValid = false;
-                $('.alert_password').text('Contraseña menor a 6 caracteres')
             }
             if (!re.test(password)) {
                 isValid = false;
-                $('.alert_password').text('Contraseña debe contener al menos una mayúscula, número y un caracter especial #?!@_&-')
             }
         }
         if (email.length == 0) {
@@ -54,34 +56,35 @@ const LoginUser = () => {
             var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
             if (!pattern.test(email)) {
                 isValid = false;
-                $('.alert_email').text('Email inválido')
             }
         }
 
-        if (isValid && isChecked) {
-            //$('.'button_register).addClass(cssRegister.active)
-            button.target.classList.add('active')
-            $('.uil-spinner-alt').addClass('active')
+        let res = await loginUser(email, password);
+        console.log(res)
+        let n = email.split('@')[0]
+        setNombre(n)
+
+        if (isValid && res) {
             setEmail('')
             setPassword('')
-            $('.alert_password').text('')
-            $('.alert_email').text('')
-            $('.register_form').children('input').val('')
-        }
-    }
-    async function load() {
-        setIsValid(true)
-    }
-
-    useEffect(() => {
-        if (isValid == true) {
+            $('input').val("");
+            $('.message-pop').addClass('active')
             setTimeout(() => {
                 navigate("/dashboard");
             }, 2000);
         }
-    }, [isValid])
+        if(!res){
+            $('.message-pop2').addClass('active')
+            setTimeout(() => {
+                $('.message-pop2').removeClass('active')  
+            }, 2000);
+        }
+    }
+
     return (
         <div className="stockrecognition-body">
+            <span className='message-pop'> Bienvenido {nombre}</span>
+            <span className='message-pop2'>El usuario no existe</span>
             <div className="container posstart">
                 <div className="rowlog">
                     <div className="rightlog padding">
@@ -91,21 +94,15 @@ const LoginUser = () => {
                                 <span className='register-h2'>Iniciar sesión</span>
                                 <div className='email_form'>
                                     <p className='text-small'>Correo electrónico</p>
-                                    <input placeholder='formato ...' className='input_form_log' type="text" onChange={(event: any) => setEmail(event.target.value)} />
+                                    <input  className='input_form_log' type="text" onChange={(event: any) => setEmail(event.target.value)} />
                                     <span className='alert alert_email'></span>
                                 </div>
                                 <div className='password_form'>
                                     <p className='text-small'>Contraseña</p>
-                                    <input placeholder='formato ...' className='input_form_log' type="password" onChange={(event: any) => setPassword(event.target.value)} />
+                                    <input  className='input_form_log' type="password" onChange={(event: any) => setPassword(event.target.value)} />
                                     <span className={`alert alert_password`}></span>
                                 </div>
-
-                                {isValid == false ? (
-                                    <span onClick={() => load()} className='button-small mbl'>Iniciar sesión</span>
-                                ) : (
-                                    <span onClick={() => load()} className='button-small mbl'>Aparece pagina de carga...!</span>
-                                )
-                                }
+                                <span onClick={(e) => validateInput(e)} className='button-small mbl'>Iniciar sesión</span>
                             </div>
 
                             <div className='already_registered'>

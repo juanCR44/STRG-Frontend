@@ -12,6 +12,7 @@
     "@types/react-dom": "^18.0.6",
     "image-capture": "^0.3.0",
     "jquery": "^3.6.0",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-camera-pro": "^1.2.1",
     "react-color": "^2.19.3",

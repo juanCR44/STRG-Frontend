@@ -1,14 +1,15 @@
 import $ from 'jquery';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { registerUser } from '../controller/getmodel';
+import User from "../constants/user"
 
 const RegisterUser = () => {
-    const [isChecked, setIsChecked] = useState<boolean>(false)
     const [password, setPassword] = useState<string>('')
     const [email, setEmail] = useState<string>('')
+    const [option, setOption] = useState<string>('Empresa X')
     let navigate = useNavigate();
 
-    const [option, setOption] = useState<string>('Empresa X')
     useEffect(() => {
         let vh = window.innerHeight * 0.01;
         // Then we set the value in the --vh custom property to the root of the document
@@ -24,9 +25,9 @@ const RegisterUser = () => {
     useEffect(() => {
         setEmail('')
         setPassword('')
-        $('.uil-check-circle').removeClass('active')
-        $('.uil-spinner-alt').removeClass('active')
-        $('.uil-times-circle').removeClass('active')
+        setOption('Empresa X')
+        $('.message-pop').removeClass('active')
+
 
         $('.dropdown').on('click', function () {
             if ($('.options_input').hasClass('active')) {
@@ -49,12 +50,10 @@ const RegisterUser = () => {
         })
     }, [])
 
-    async function load() {
-
-    }
-
     async function validateInput(button: any) {
         let isValid = true;
+        $('.alert_password').text('')
+        $('.alert_email').text('')
         if (password.length == 0) {
             isValid = false;
             $('.alert_password').text('Ingrese contraseña')
@@ -81,51 +80,27 @@ const RegisterUser = () => {
                 $('.alert_email').text('Email inválido')
             }
         }
-
-        if (isValid && isChecked) {
+        console.log("como")
+        if (isValid) {
             //$('.'button_register).addClass(cssRegister.active)
-            button.target.classList.add('active')
-            $('.uil-spinner-alt').addClass('active')
+            //button.target.classList.add('active')
+            //$('.uil-spinner-alt').addClass('active')
             setEmail('')
             setPassword('')
             $('.alert_password').text('')
             $('.alert_email').text('')
-            $('.register_form').children('input').val('')
-            //const newuser: User = { email: email, password: password, role: 'usuario', isActive: true }
-            //await registerUser(newuser).then((res) => {
-            //    $('.' + css_popup.popup_layout).addClass(css_popup.active)
-            //    console.log("aqui")
-            //    if (!res.ok) {
-            //        $('.' + css_popup.text_popup).text("Correo ya en uso")
-            //        $('.' + css_popup.box_popup).addClass(css_popup.error)
-            //        $('.' + css_popup.text_popup).addClass(css_popup.show_text_error)
-            //        $('.uil-times-circle').addClass('active')
-            //    } else {
-            //        $('.' + css_popup.text_popup).text("¡Te has registrado!")
-            //        $('.' + css_popup.box_popup).addClass(css_popup.active)
-            //        $('.' + css_popup.text_popup).addClass(css_popup.show_text)
-            //        $('.uil-check-circle').addClass('active')
-            //    }
-            //    button.target.classList.remove(cssRegister.active)
-            //    $('.uil-spinner-alt').removeClass('active')
-            //
-            //    setTimeout(() => {
-            //        $('.' + css_popup.popup_layout).removeClass(css_popup.active)
-            //        $('.' + css_popup.box_popup).removeClass(css_popup.active)
-            //        $('.' + css_popup.text_popup).removeClass(css_popup.active)
-            //        $('.uil-check-circle').removeClass('active')
-            //        $('.' + css_popup.box_popup).removeClass(css_popup.error)
-            //        $('.' + css_popup.text_popup).removeClass(css_popup.error)
-            //        $('.uil-times-circle').removeClass('active')
-            //        if(res.ok){
-            //            navigate("/"); 
-            //        }
-            //    }, 2000);
-            //})
+            $('input').val("");
+
+            registerUser({ email: email, password: password, enterprise: option })
+            $('.message-pop').addClass('active')
+            setTimeout(() => {
+                navigate('/login')
+            }, 2000);
         }
     }
     return (
         <div className="stockrecognition-body">
+            <span className='message-pop'>¡Te has registrado! <i className="uil uil-check-circle big"></i></span>
             <div className="container posstart">
                 <div className="rowlog">
                     <div className="rightlog padding">
@@ -135,12 +110,12 @@ const RegisterUser = () => {
                                 <span className='register-h2'>Crear cuenta </span>
                                 <div className='email_form'>
                                     <p className='text-small'>Correo electrónico</p>
-                                    <input placeholder='formato ...' className='input_form_log' type="text" onChange={(event: any) => setEmail(event.target.value)} />
+                                    <input placeholder='Example@gmail.com' className='input_form_log' type="text" onChange={(event: any) => setEmail(event.target.value)} />
                                     <span className='alert alert_email'></span>
                                 </div>
                                 <div className='password_form'>
                                     <p className='text-small'>Contraseña</p>
-                                    <input placeholder='formato ...' className='input_form_log' type="password" onChange={(event: any) => setPassword(event.target.value)} />
+                                    <input placeholder='Caracteres #?!@_&-' className='input_form_log' type="password" onChange={(event: any) => setPassword(event.target.value)} />
                                     <span className={`alert alert_password`}></span>
                                 </div>
                                 <div className='empresa_form'>
@@ -161,7 +136,7 @@ const RegisterUser = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <span onClick={() => load()} className='button-small mbs'>Registrar cuenta</span>
+                                <span onClick={(e) => validateInput(e)} className='button-small mbs'>Registrar cuenta</span>
                             </div>
 
                             <div className='already_registered'>
