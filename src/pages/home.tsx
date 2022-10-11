@@ -353,6 +353,13 @@ const Home = () => {
     }
 
     function getTypeRegistered(type: string) {
+        setFullcount(0)
+        setFullcountdamage(0)
+        setObject([])
+        setDimage('')
+        setStateProduct('')
+        setEproduct('')
+
         setShowTypes(false)
         setShowTypeRegistered(true)
         if (type == 'sanmateo') {
