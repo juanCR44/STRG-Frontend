@@ -308,6 +308,7 @@ const Home = () => {
         setCount(count)
         setAverage(average)
 
+        setShowTypes(false)
         setDidSelect(true)
         $('.return').addClass('active')
         setShowDetect(true)
@@ -476,12 +477,14 @@ const Home = () => {
                                                     <div className="product-type-item">
                                                         <img onClick={() => getTypeRegistered("inca")} src="image/incak.jpg" alt="" />
                                                         <img onClick={() => getTypeRegistered("sanmateo")} src="image/sanmateo.png" alt="" />
+                                                        <img onClick={() => getTypeRegistered("cielo")} src="image/cielo.png" alt="" />
                                                     </div>
                                                 </div>
                                                 <div className="right centered flex flexcolumn gap">
                                                     <span className="spantitle">Latas</span>
                                                     <div className="product-type-item">
                                                         <img onClick={() => getTypeRegistered("redbull")} src="image/redbull.jpg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/msa2.jpg" alt="" />
                                                         <img onClick={() => getTypeRegistered("monster")} src="image/monster.jpg" alt="" />
                                                     </div>
                                                 </div>
@@ -678,12 +681,14 @@ const Home = () => {
                                                     <div className="product-type-item">
                                                         <img onClick={() => getTypeRegistered("inca")} src="image/incak.jpg" alt="" />
                                                         <img onClick={() => getTypeRegistered("sanmateo")} src="image/sanmateo.png" alt="" />
+                                                        <img onClick={() => getTypeRegistered("cielo")} src="image/cielo.png" alt="" />
                                                     </div>
                                                 </div>
                                                 <div className="right centered flex flexcolumn gap">
                                                     <span className="spantitle">Latas</span>
                                                     <div className="product-type-item">
                                                         <img onClick={() => getTypeRegistered("redbull")} src="image/redbull.jpg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/msa2.jpg" alt="" />
                                                         <img onClick={() => getTypeRegistered("monster")} src="image/monster.jpg" alt="" />
                                                     </div>
                                                 </div>

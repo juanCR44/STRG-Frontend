@@ -809,6 +809,8 @@ a:hover {
 
 .product-type-item {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
 }
 
