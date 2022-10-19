@@ -304,6 +304,7 @@ const Home = () => {
         }
         setImageYolo(images![0])
 
+        console.log(names)
         setNames(names)
         setCount(count)
         setAverage(average)
@@ -364,20 +365,29 @@ const Home = () => {
         setShowTypeRegistered(true)
         if (type == 'sanmateo') {
             setProducType('San Mateo')
-            setProducTypeJson('SanMateo')
+            setProducTypeJson('SanMateo_2.5L')
         }
         if (type == 'inca') {
-            setProducType('IncaKola')
-            setProducTypeJson('IncaKola')
+            setProducType('Inca Kola')
+            setProducTypeJson('IncaKola_1.5L')
         }
-        if (type == 'redbull') {
-            setProducType('Monster sin Azucar')
-            setProducTypeJson('Monster_Sin_Azucar')
+        if (type == 'cielo') {
+            setProducType('Cielo')
+            setProducTypeJson('Cielo_2.5L')
         }
         if (type == 'monster') {
             setProducType('Monster Original')
-            setProducTypeJson('Monster_Original')
+            setProducTypeJson('MonsterOriginal_473ml')
         }
+        if (type == 'redbull') {
+            setProducType('Redbull')
+            setProducTypeJson('RedBull_250ml')
+        }
+        if (type == 'monster_sa') {
+            setProducType('Monster sin Azucar')
+            setProducTypeJson('MonsterZeroSugar_473ml')
+        }
+        
     }
 
     function selectRegistered(e: any, element: any) {
@@ -491,7 +501,7 @@ const Home = () => {
                                                     <span className="spantitle">Latas</span>
                                                     <div className="product-type-item">
                                                         <img onClick={() => getTypeRegistered("redbull")} src="image/redbull.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/msa2.jpg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("monster_sa")} src="image/msa2.jpg" alt="" />
                                                         <img onClick={() => getTypeRegistered("monster")} src="image/monster.jpg" alt="" />
                                                     </div>
                                                 </div>
