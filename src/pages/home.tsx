@@ -23,11 +23,15 @@ const Home = () => {
     const [average, setAverage] = useState<any>()
     const [averageState, setAverageState] = useState<any>()
     const [state, setState] = useState<any>()
-    const [names, setNames] = useState<any>()
+    const [namesGood, setNamesGood] = useState<any>()
+    const [namesBad, setNamesBad] = useState<any>()
     const [fullcount, setFullcount] = useState<number>(0)
     const [fullcountdamage, setFullcountdamage] = useState<number>(0)
     const [object, setObject] = useState<any[]>([])
     const [dimage, setDimage] = useState<any>()
+    const [showGoodState, setShowGoodState] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false)
+
     const [uploadedImage, setUploadedImage] = useState<File>()
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -35,11 +39,14 @@ const Home = () => {
     const [imageState, setImageState] = useState<string>('')
     const [eproduct, setEproduct] = useState<string>('')
 
-    const [imagesYoloCropped, setImagesYoloCropped] = useState<any>()
+    const [imagesYoloCroppedGood, setImagesYoloCroppedGood] = useState<any>()
+    const [imagesYoloCroppedBad, setImagesYoloCroppedBad] = useState<any>()
 
     const [date, setDate] = useState<any>(new Date().toISOString().split('T')[0]);
     const [user, setUser] = useState<string>('')
     const [id, setId] = useState<any>()
+
+    const [avgF, setAvgF] = useState(0)
 
     useEffect(() => {
 
@@ -51,39 +58,53 @@ const Home = () => {
         setId(localStorage.getItem('id')!)
         console.log(localStorage.getItem('email')!, localStorage.getItem('id')!)
 
-        let photo = searchParams.get('image')
+        let photoGood = searchParams.get('imagesGood')
+        let photoBad = searchParams.get('imagesBad')
         let count = searchParams.get('count')
         let average = searchParams.get('average')
-        let names = searchParams.get('names')
+        let namesGood = searchParams.get('namesGood')
+        let namesBad = searchParams.get('namesBad')
 
-        if (photo && count && average && names) {
-            //photo = `[${photo}]`
-            console.log(names)
+        if (photoGood && count && average && namesGood) {
+            //photoGood = `[${photoGood}]`
+            console.log(namesGood)
 
-            photo = photo!.replace(/'/g, '"')
-            photo = '[' + photo + ']'
-            photo = JSON.parse(photo)
+            photoGood = photoGood!.replace(/'/g, '"')
+            photoGood = '[' + photoGood + ']'
+            photoGood = JSON.parse(photoGood)
 
-            names = names!.replace(/'/g, '"')
-            names = '[' + names + ']'
-            names = JSON.parse(names)
+            namesGood = namesGood!.replace(/'/g, '"')
+            namesGood = '[' + namesGood + ']'
+            namesGood = JSON.parse(namesGood)
 
-            // console.log(photo)
-            //console.log(photo![0])
-            if (photo!.length > 1) {
+            photoBad = photoBad!.replace(/'/g, '"')
+            photoBad = '[' + photoBad + ']'
+            photoBad = JSON.parse(photoBad)
+
+            namesBad = namesBad!.replace(/'/g, '"')
+            namesBad = '[' + namesBad + ']'
+            namesBad = JSON.parse(namesBad)
+
+            // console.log(photoGood)
+            //console.log(photoGood![0])
+            if (photoGood!.length > 1) {
                 let temp = []
-                for (let x = 1; x < photo!.length; x++) {
-                    temp.push(photo![x])
+                for (let x = 1; x < photoGood!.length; x++) {
+                    temp.push(photoGood![x])
                 }
-                setImagesYoloCropped(temp)
+                setImagesYoloCroppedGood(temp)
+            }
+            if (photoBad!.length > 0) {
+                setImagesYoloCroppedBad(photoBad)
             }
 
             setDidSelect(true)
             $('.return').addClass('active')
             setShowDetect(true)
             setShowYolo(true)
-            setImageYolo(photo![0])
-            setNames(names)
+            setImageYolo(photoGood![0])
+            setNamesGood(namesGood)
+            setNamesBad(namesBad)
             setCount(count)
             setAverage(average)
             // setImageYolo(photo)
@@ -101,15 +122,23 @@ const Home = () => {
     },[imagesYoloCropped])*/
 
     const removeQueryParams = () => {
-        const param = searchParams.get('image');
-        if (param) {
-            searchParams.delete('image');
+        const param = searchParams.get('imagesGood');
+        const param2 = searchParams.get('imagesBad')
+        if (param || param2) {
+            searchParams.delete('imagesGood');
+            searchParams.delete('imagesBad');
             searchParams.delete('average')
             searchParams.delete('count');
-            searchParams.delete('names');
+            searchParams.delete('namesGood');
+            searchParams.delete('namesBad');
             setSearchParams(searchParams);
         }
     };
+
+    useEffect(() => {
+        $('.cu-left').addClass('active')
+        setShowGoodState(true)
+    }, [namesGood, namesBad])
 
     function showTypeHtml() {
         setShowDetect(false)
@@ -145,8 +174,6 @@ const Home = () => {
         $('.overlay').removeClass('active')
         $(".colection-info-yolo").removeClass('active')
         $('.image-full').removeClass('active')
-
-        console.log('2')
     }, [])
     useEffect(() => {
         let vh = window.innerHeight * 0.01;
@@ -158,8 +185,6 @@ const Home = () => {
             let vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
         });
-
-        console.log('3')
     }, [])
     useEffect(() => {
         $('.arrow-cont').on('click', function () {
@@ -197,7 +222,6 @@ const Home = () => {
             }
         })
         $('.whatsapp').on('click', function () {
-            console.log("je")
             if ($('.whatsapp-active').hasClass('active')) {
                 $('.whatsapp-active').removeClass('active')
             }
@@ -205,13 +229,11 @@ const Home = () => {
                 $('.whatsapp-active').addClass('active')
             }
         })
-
-        console.log('4')
     }, [])
+
 
     useEffect(() => {
         $('.product-image').on('click', function () {
-            console.log("jee")
             $('.product-image-full').addClass('active')
             $('.uil-times').addClass('active')
             $('.overlay').addClass('active')
@@ -225,10 +247,34 @@ const Home = () => {
             $(".colection-info-yolo").removeClass('active')
             $('.image-full').removeClass('active')
         })
+    })
 
-
-        console.log('5')
-    }, [])
+    function toggleState(e: any) {
+        if (e.target.classList.contains('cu-left')) {
+            if (e.target.classList.contains('active')) {
+                e.target.classList.remove('active')
+                $('.cu-right').addClass('active')
+                setShowGoodState(false)
+            }
+            else {
+                e.target.classList.add('active')
+                $('.cu-right').removeClass('active')
+                setShowGoodState(true)
+            }
+        }
+        if (e.target.classList.contains('cu-right')) {
+            if (e.target.classList.contains('active')) {
+                e.target.classList.remove('active')
+                $('.cu-left').addClass('active')
+                setShowGoodState(true)
+            }
+            else {
+                e.target.classList.add('active')
+                $('.cu-left').removeClass('active')
+                setShowGoodState(false)
+            }
+        }
+    }
 
     function goPhoto() {
         navigate("/camera");
@@ -284,28 +330,39 @@ const Home = () => {
 
     async function detectUploaded(e: any) {
         let file = e.target.files[0]
+
+        console.log("aqui")
         const base64 = await convertBase64(file)
 
         let res = await detect(base64)
 
-        let images = res.imagearr
-        let average = res.average
+        let photoGood = res.resultGood
+        let photoBad = res.resultBad
         let count = res.count
-        let names = res.names
+        let average = res.average
+        let namesGood = res.namesGood
+        let namesBad = res.namesBad
 
         console.log(res.imagearr)
 
-        if (images!.length > 1) {
+        if (photoGood!.length > 1) {
             let temp = []
-            for (let x = 1; x < images!.length; x++) {
-                temp.push(images![x])
+            for (let x = 1; x < photoGood!.length; x++) {
+                temp.push(photoGood![x])
             }
-            setImagesYoloCropped(temp)
+            setImagesYoloCroppedGood(temp)
         }
-        setImageYolo(images![0])
+        if (photoBad!.length > 0) {
+            setImagesYoloCroppedBad(photoBad)
+        }
 
-        console.log(names)
-        setNames(names)
+
+        setImageYolo(photoGood![0])
+        console.log(namesGood, namesBad)
+
+        setNamesGood(namesGood)
+        setNamesBad(namesBad)
+
         setCount(count)
         setAverage(average)
 
@@ -314,10 +371,12 @@ const Home = () => {
         $('.return').addClass('active')
         setShowDetect(true)
         setShowYolo(true)
+        e.target.value = ''
     }
 
     function goBack() {
         console.log(showYolo, showState)
+        $('.message-load').removeClass('active')
         if (showState) {
             setShowState(false)
             setShowYolo(true)
@@ -344,19 +403,46 @@ const Home = () => {
     }
 
     async function registrarProducto() {
-        const detection: Detection = {
-            user_id: id, count: count.toString(), percentage: average.toString(), date: new Date(),
-            namestate: typeText, imagestate: imageState, percentagestate: averageState.toString(), state: state
-        }
+        if (imagesYoloCroppedBad.length > 0 || imagesYoloCroppedGood.length > 0) {
+            setLoading(true)
+            const totalImages = imagesYoloCroppedGood.concat(imagesYoloCroppedBad)
+            const totalLabel = namesGood.concat(namesBad)
 
-        let res = await registerDetection(detection)
-        console.log(res.ok)
+            console.log(totalLabel)
+
+            for (let x = 0; x < totalImages.length; x++) {
+                let nametype = ''
+                if (totalLabel[x].split('ME_')[0] == '') {
+                    nametype = totalLabel[x].split('ME_')[1]
+                }
+                else {
+                    nametype = totalLabel[x]
+                }
+
+                const detection: Detection = {
+                    user_id: id, count: count.toString(), percentage: average.toString(), date: new Date(),
+                    names: totalLabel[x], nametype: nametype, images: totalImages[x]
+                }
+
+                let res = await registerDetection(detection)
+                console.log(res.ok)
+            }
+            $('.message-load').addClass('active')
+            setTimeout(() => {
+                goBack()
+                setLoading(false)
+            }, 2000);
+        }
+        else {
+            return alert("No hay detecciones")
+        }
     }
 
     function getTypeRegistered(type: string) {
         setFullcount(0)
         setFullcountdamage(0)
         setObject([])
+        setAvgF(0)
         setDimage('')
         setStateProduct('')
         setEproduct('')
@@ -387,14 +473,21 @@ const Home = () => {
             setProducType('Monster sin Azucar')
             setProducTypeJson('MonsterZeroSugar_473ml')
         }
-        
+
     }
 
     function selectRegistered(e: any, element: any) {
         let name = e.target.parentNode.children[0].textContent
         setStateProduct(name)
-        setEproduct(element['state'])
-        let image = element['imagestate']
+
+        if (element['names'].split('ME_')[0] == '') {
+            setEproduct('En mal estado')
+        }
+        else {
+            setEproduct('En buen estado')
+        }
+
+        let image = element['images']
 
         setDimage(image)
         setDidSelectRegistered(true)
@@ -416,18 +509,20 @@ const Home = () => {
         }
         else {
             let arr = JSON.parse(res)
-            let fcount = 0
+            let fcount = arr.length
             let dcount = 0
+            let favg = arr[0]['percentage']
 
             arr.forEach((element: any) => {
-                fcount += Number(element['count'])
-                if (element['state'] == 'Malo') {
+                //fcount += Number(element['count'])
+                if (element['names'].split('ME')[0] == '') {
                     dcount += 1
                 }
             });
 
             setObject(arr)
             setFullcount(fcount)
+            setAvgF(favg)
             setFullcountdamage(dcount)
         }
     };
@@ -481,6 +576,9 @@ const Home = () => {
                             </div>
                         </div>
                         <div className="product-type-list">
+                            <span className="message-load">
+                                Detección registrada <i className="uil uil-check-circle"></i>
+                            </span>
                             <p onClick={() => goBack()} className="return">Atrás</p>
                             <i className="uil uil-times"></i>
                             <img className="product-image-full" src={imageYolo} alt="" />
@@ -526,6 +624,10 @@ const Home = () => {
                                                             <p>Productos dañados</p>
                                                             <p className="box-p">{fullcountdamage}</p>
                                                         </div>
+                                                        <div className="info-registered">
+                                                            <p>Porcentaje detección promedio</p>
+                                                            <p className="box-p">{avgF}</p>
+                                                        </div>
                                                         <p>Estado de productos</p>
                                                         <div className="table-container">
                                                             <div className="table-label">
@@ -541,8 +643,8 @@ const Home = () => {
                                                                     return (
                                                                         <div onClick={(e) => selectRegistered(e, element)} className="table-product" key={index}>
                                                                             <p className="table-name">Producto #{index + 1}</p>
-                                                                            {element['state'] == 'Bueno' && <i className="uil uil-check-circle table-state center-state"></i>}
-                                                                            {element['state'] == 'Malo' && <i className="uil uil-times-circle table-state center-state"></i>}
+                                                                            {element['names'].split('ME')[0] != '' && <i className="uil uil-check-circle table-state center-state"></i>}
+                                                                            {element['names'].split('ME')[0] == '' && <i className="uil uil-times-circle table-state center-state"></i>}
                                                                         </div>
                                                                     )
                                                                 })}
@@ -603,25 +705,38 @@ const Home = () => {
                                                                     </div>
                                                                     <div className="down">
                                                                         <div className="card-info">
-                                                                            <div className="card-up">
-                                                                                <p className="bold">Productos</p>
+                                                                            <div className="card-up nopadding">
+                                                                                <div className="cu-left" onClick={(e) => toggleState(e)}>
+                                                                                    <p className="bold">Buen estado</p>
+                                                                                </div>
+                                                                                <div className="cu-right" onClick={(e) => toggleState(e)}>
+                                                                                    <p className="bold">Mal estado</p>
+                                                                                </div>
                                                                             </div>
                                                                             <div className="card-down">
                                                                                 <div className="products-detected">
-                                                                                    {imagesYoloCropped && imagesYoloCropped.map((image: any, index: any) => {
 
+                                                                                    {showGoodState && imagesYoloCroppedGood && imagesYoloCroppedGood.map((image: any, index: any) => {
                                                                                         return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
                                                                                             <img className="cropped-size" src={image} alt="" />
-                                                                                            <p>{names[index]}</p>
+                                                                                            <p>{namesGood[index]}</p>
                                                                                         </div>)
-
+                                                                                    })}
+                                                                                    {!showGoodState && imagesYoloCroppedBad && imagesYoloCroppedBad.map((image: any, index: any) => {
+                                                                                        return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
+                                                                                            <img className="cropped-size" src={image} alt="" />
+                                                                                            <p>{namesBad[index]}</p>
+                                                                                        </div>)
                                                                                     })}
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <span onClick={() => verifyState()} className="button button-dashboard button-tablet">Verificar estado</span>
+
+                                                                {!loading && <span onClick={() => registrarProducto()} className="button button-dashboard button-tablet">Registrar detección</span>}
+                                                                {loading && <i className="uil uil-spinner-alt"></i>}
+
                                                             </div>
                                                         </div>
                                                     )
@@ -729,6 +844,10 @@ const Home = () => {
                                                             <p>Productos dañados</p>
                                                             <p className="box-p">{fullcountdamage}</p>
                                                         </div>
+                                                        <div className="info-registered">
+                                                            <p>Porcentaje detección promedio</p>
+                                                            <p className="box-p">{avgF}</p>
+                                                        </div>
                                                         <p>Estado de productos</p>
                                                         <div className="table-container">
                                                             <div className="table-label">
@@ -744,8 +863,8 @@ const Home = () => {
                                                                     return (
                                                                         <div onClick={(e) => selectRegistered(e, element)} className="table-product" key={index}>
                                                                             <p className="table-name">Producto #{index + 1}</p>
-                                                                            {element['state'] == 'Bueno' && <i className="uil uil-check-circle table-state center-state"></i>}
-                                                                            {element['state'] == 'Malo' && <i className="uil uil-times-circle table-state center-state"></i>}
+                                                                            {element['names'].split('ME')[0] != '' && <i className="uil uil-check-circle table-state center-state"></i>}
+                                                                            {element['names'].split('ME')[0] == '' && <i className="uil uil-times-circle table-state center-state"></i>}
                                                                         </div>
                                                                     )
                                                                 })}
@@ -806,25 +925,35 @@ const Home = () => {
                                                                     </div>
                                                                     <div className="down">
                                                                         <div className="card-info">
-                                                                            <div className="card-up">
-                                                                                <p className="bold">Productos</p>
+                                                                            <div className="card-up nopadding">
+                                                                                <div className="cu-left" onClick={(e) => toggleState(e)}>
+                                                                                    <p className="bold">Buen estado</p>
+                                                                                </div>
+                                                                                <div className="cu-right" onClick={(e) => toggleState(e)}>
+                                                                                    <p className="bold">Mal estado</p>
+                                                                                </div>
                                                                             </div>
                                                                             <div className="card-down">
                                                                                 <div className="products-detected">
-                                                                                    {imagesYoloCropped && imagesYoloCropped.map((image: any, index: any) => {
 
+                                                                                    {showGoodState && imagesYoloCroppedGood && imagesYoloCroppedGood.map((image: any, index: any) => {
                                                                                         return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
                                                                                             <img className="cropped-size" src={image} alt="" />
-                                                                                            <p>{names[index]}</p>
+                                                                                            <p>{namesGood[index]}</p>
                                                                                         </div>)
-
+                                                                                    })}
+                                                                                    {!showGoodState && imagesYoloCroppedBad && imagesYoloCroppedBad.map((image: any, index: any) => {
+                                                                                        return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
+                                                                                            <img className="cropped-size" src={image} alt="" />
+                                                                                            <p>{namesBad[index]}</p>
+                                                                                        </div>)
                                                                                     })}
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <span onClick={() => verifyState()} className="button button-dashboard button-tablet">Verificar estado</span>
+                                                                <span onClick={() => registrarProducto()} className="button button-dashboard button-tablet">Registrar detección</span>
                                                             </div>
                                                         </div>
                                                     )

@@ -34,12 +34,15 @@ const Procamera = () => {
 
       let res = await detect(photo)
       console.log(res)
-      let images = res.imagearr.map((s: any) => `'${s}'`).join(',');
-      let average = res.average
+      let imagesGood = res.resultGood.map((s: any) => `'${s}'`).join(',');
+      let imagesBad = res.resultBad.map((s: any) => `'${s}'`).join(',');
       let count = res.count
-      let names = res.names.map((s: any) => `'${s}'`).join(',');
+      let average = res.average
+      let namesGood = res.namesGood.map((s: any) => `'${s}'`).join(',');
+      let namesBad = res.namesBad.map((s: any) => `'${s}'`).join(',');
 
-      const params = { image: images, average: average, count: count, names: names }
+
+      const params = { imagesGood: imagesGood, imagesBad: imagesBad,average: average, count: count, namesGood: namesGood, namesBad: namesBad }
       setTimeout(() => {
         setLoading(false)
         navigate({

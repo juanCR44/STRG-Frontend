@@ -85,14 +85,13 @@ export async function registerUser(user: User): Promise<any> {
 export async function registerDetection(detection: Detection): Promise<any> {
     const formdata = new FormData();
 
-    formdata.append('imagestate', detection.imagestate)
+    formdata.append('images', detection.images)
     formdata.append('user_id', detection.user_id)
     formdata.append('count', detection.count)
     formdata.append('percentage', detection.percentage)
     formdata.append('date', detection.date.toString())
-    formdata.append('namestate', detection.namestate)
-    formdata.append('percentagestate', detection.percentagestate)
-    formdata.append('state', detection.state)
+    formdata.append('names', detection.names)
+    formdata.append('nametype', detection.nametype)
 
     let res = await fetch(registerDetectionUrl, {
         method: 'POST',
