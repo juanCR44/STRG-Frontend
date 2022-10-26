@@ -807,7 +807,7 @@ const Home = () => {
                                 <>
                                     {
                                         (showTypes &&
-                                            (<div className="row centered mb">
+                                            (<div className="row centered">
                                                 <div className="left centered flex flexcolumn gap borderright">
                                                     <span className="spantitle">Botellas</span>
                                                     <div className="product-type-item">
@@ -820,7 +820,7 @@ const Home = () => {
                                                     <span className="spantitle">Latas</span>
                                                     <div className="product-type-item">
                                                         <img onClick={() => getTypeRegistered("redbull")} src="image/redbull.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/msa2.jpg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("monster_sa")} src="image/msa2.jpg" alt="" />
                                                         <img onClick={() => getTypeRegistered("monster")} src="image/monster.jpg" alt="" />
                                                     </div>
                                                 </div>
