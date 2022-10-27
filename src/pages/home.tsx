@@ -68,7 +68,9 @@ const Home = () => {
         let namesGood = searchParams.get('namesGood')
         let namesBad = searchParams.get('namesBad')
 
-        if (photoGood && count && average && namesGood) {
+
+
+        if (photoGood && count && average && (namesGood || namesBad)) {
             //photoGood = `[${photoGood}]`
             console.log(namesGood)
 
@@ -88,6 +90,7 @@ const Home = () => {
             namesBad = '[' + namesBad + ']'
             namesBad = JSON.parse(namesBad)
 
+            console.log(photoGood)
             // console.log(photoGood)
             //console.log(photoGood![0])
             if (photoGood!.length > 1) {
@@ -107,9 +110,6 @@ const Home = () => {
             setShowYolo(true)
             if (photoGood!.length > 0) {
                 setImageYolo(photoGood![0])
-            }
-            else if (photoBad!.length>0){
-                setImageYolo(photoBad![0])
             }
             setImageYolo('')
             setNamesGood(namesGood)
