@@ -730,7 +730,6 @@ const Home = () => {
                                                                             </div>
                                                                             <div className="card-down">
                                                                                 <div className="products-detected">
-
                                                                                     {showGoodState && imagesYoloCroppedGood && imagesYoloCroppedGood.map((image: any, index: any) => {
                                                                                         return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
                                                                                             <img className="cropped-size" src={image} alt="" />
