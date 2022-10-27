@@ -893,6 +893,8 @@ a:hover {
 .table-content {
     display: flex;
     flex-direction: column;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .table-product:nth-child(odd) {
