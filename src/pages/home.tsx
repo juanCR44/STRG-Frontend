@@ -509,6 +509,11 @@ const Home = () => {
     }
 
     async function onChangeDate(e: any) {
+        setObject([])
+        setFullcount(0)
+        setAvgF(0)
+        setFullcountdamage(0)
+
         console.log(e.target.value)
         const newDate = new Date(e.target.value).toISOString().split('T')[0]
         setDate(newDate);
