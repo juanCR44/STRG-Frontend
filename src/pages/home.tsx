@@ -339,6 +339,12 @@ const Home = () => {
         setImagesYoloCroppedBad([])
         setImagesYoloCroppedGood([])
         setCount(0)
+        
+        $('.cu-left').addClass('active')
+        $('.cu-left').removeClass('active')
+        setShowGoodState(true)
+
+
 
         console.log("aqui")
         const base64 = await convertBase64(file)
