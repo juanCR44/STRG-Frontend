@@ -67,7 +67,7 @@ const Home = () => {
         let average = searchParams.get('average')
         let namesGood = searchParams.get('namesGood')
         let namesBad = searchParams.get('namesBad')
-
+        setShowTypeRegistered(false)
 
 
         if (photoGood && count && average && (namesGood || namesBad)) {
@@ -376,6 +376,7 @@ const Home = () => {
         setAverage(average)
 
         setShowTypes(false)
+        setShowTypeRegistered(false)
         setDidSelect(true)
         $('.return').addClass('active')
         setShowDetect(true)
