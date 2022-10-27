@@ -35,7 +35,7 @@ const Home = () => {
     const [uploadedImage, setUploadedImage] = useState<File>()
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const [imageYolo, setImageYolo] = useState<any>()
+    const [imageYolo, setImageYolo] = useState<string>('')
     const [imageState, setImageState] = useState<string>('')
     const [eproduct, setEproduct] = useState<string>('')
 
