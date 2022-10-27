@@ -544,14 +544,14 @@ const Home = () => {
                         <h1 className="logo">Stock Recognition</h1>
                         <div className="navbar-redirect">
                             <ul className='redirect-links'>
-                                <li><a className='link-item' href="/">Modificar perfil</a></li>
+                                {/*<li><a className='link-item' href="/">Modificar perfil</a></li>*/}
                                 <li><a className='link-item' onClick={() => { localStorage.clear() }} href="/login">Cerrar sesión</a></li>
                             </ul>
                             <ul className='redirect-links-mobile'>
                                 <li className="link-item" onClick={() => goPhoto()}>Tomar foto</li>
                                 <li className="link-item relative"><input type="file" name="image" onChange={(e) => detectUploaded(e)} /> Cargar foto</li>
                                 <li className="link-item" onClick={() => showTypeHtml()}>Productos registrados</li>
-                                <li className='link-item'>Modificar perfil</li>
+                                {/*<li className='link-item'>Modificar perfil</li>*/}
                                 <li className='link-item'>Cerrar sesión</li>
                             </ul>
                         </div>
