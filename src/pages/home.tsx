@@ -39,7 +39,7 @@ const Home = () => {
     const [imageState, setImageState] = useState<string>('')
     const [eproduct, setEproduct] = useState<string>('')
 
-    const [imagesYoloCroppedGood, setImagesYoloCroppedGood] = useState<any>()
+    const [imagesYoloCroppedGood, setImagesYoloCroppedGood] = useState<any[]>([])
     const [imagesYoloCroppedBad, setImagesYoloCroppedBad] = useState<any>()
 
     const [date, setDate] = useState<any>(new Date().toISOString().split('T')[0]);
@@ -57,6 +57,9 @@ const Home = () => {
         setUser(localStorage.getItem('email')!)
         setId(localStorage.getItem('id')!)
         console.log(localStorage.getItem('email')!, localStorage.getItem('id')!)
+
+        setImagesYoloCroppedBad([])
+        setImagesYoloCroppedGood([])
 
         let photoGood = searchParams.get('imagesGood')
         let photoBad = searchParams.get('imagesBad')
@@ -102,7 +105,13 @@ const Home = () => {
             $('.return').addClass('active')
             setShowDetect(true)
             setShowYolo(true)
-            setImageYolo(photoGood![0])
+            if (photoGood!.length > 0) {
+                setImageYolo(photoGood![0])
+            }
+            else if (photoBad!.length>0){
+                setImageYolo(photoBad![0])
+            }
+            setImageYolo('')
             setNamesGood(namesGood)
             setNamesBad(namesBad)
             setCount(count)
@@ -330,6 +339,9 @@ const Home = () => {
 
     async function detectUploaded(e: any) {
         let file = e.target.files[0]
+        setImagesYoloCroppedBad([])
+        setImagesYoloCroppedGood([])
+        setCount(0)
 
         console.log("aqui")
         const base64 = await convertBase64(file)
