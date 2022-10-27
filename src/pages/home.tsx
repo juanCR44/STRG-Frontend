@@ -239,7 +239,7 @@ const Home = () => {
 
 
     useEffect(() => {
-        $('.product-image').on('click', function () {
+        /*$('.product-image').on('click', function () {
             $('.product-image-full').addClass('active')
             $('.uil-times').addClass('active')
             $('.overlay').addClass('active')
@@ -252,7 +252,7 @@ const Home = () => {
             $('.overlay').removeClass('active')
             $(".colection-info-yolo").removeClass('active')
             $('.image-full').removeClass('active')
-        })
+        })*/
     })
 
     function toggleState(e: any) {
@@ -696,7 +696,7 @@ const Home = () => {
                                                     showYolo && (
                                                         <div className="row centered verify-yolo">
                                                             <div className="left centered flex flexcolumn gap borderright padding-image">
-                                                                <img className="product-image" src={imageYolo} alt="" />
+                                                                <img className="product-image" onClick={() => window.open(imageYolo, "_blank")} src={imageYolo} alt="" />
                                                             </div>
                                                             <div className="right centered flex flexcolumn gap">
                                                                 <div className="colection-info-yolo yolo-tablet">
@@ -915,7 +915,7 @@ const Home = () => {
                                                     showYolo && (
                                                         <div className="row centered verify-yolo">
                                                             <div className="left centered flex flexcolumn gap borderright padding-image godown">
-                                                                <img className="product-image" src={imageYolo} alt="" />
+                                                                <img className="product-image" onClick={() => window.open(imageYolo, "_blank")} src={imageYolo} alt="" />
                                                             </div>
                                                             <div className="right centered flex flexcolumn gap">
                                                                 <div className="colection-info-yolo yolo-tablet">
