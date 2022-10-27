@@ -108,10 +108,7 @@ const Home = () => {
             $('.return').addClass('active')
             setShowDetect(true)
             setShowYolo(true)
-            if (photoGood!.length > 0) {
-                setImageYolo(photoGood![0])
-            }
-            setImageYolo('')
+            setImageYolo(photoGood![0])
             setNamesGood(namesGood)
             setNamesBad(namesBad)
             setCount(count)
