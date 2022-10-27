@@ -341,7 +341,7 @@ const Home = () => {
         setCount(0)
         
         $('.cu-left').addClass('active')
-        $('.cu-left').removeClass('active')
+        $('.cu-right').removeClass('active')
         setShowGoodState(true)
 
 
