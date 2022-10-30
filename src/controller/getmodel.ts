@@ -3,18 +3,19 @@ import User from "../constants/user"
 
 const baseURL = "https://django-stockrcgnt.herokuapp.com/api/detect"
 
-const detectUrl = "http://127.0.0.1:8000/api/detect"
-const detectStateUrl = "http://127.0.0.1:8000/api/detectstate"
-const registerUserUrl = "http://127.0.0.1:8000/api/registeruser"
-const loginUserUrl = "http://127.0.0.1:8000/api/loginuser"
-const registerDetectionUrl = "http://127.0.0.1:8000/api/registerdetection"
-const getDetectionUrl = "http://127.0.0.1:8000/api/getdetection"
+//const detectUrl = "http://127.0.0.1:8000/api/detect"
+//const detectStateUrl = "http://127.0.0.1:8000/api/detectstate"
+//const registerUserUrl = "http://127.0.0.1:8000/api/registeruser"
+//const loginUserUrl = "http://127.0.0.1:8000/api/loginuser"
+//const registerDetectionUrl = "http://127.0.0.1:8000/api/registerdetection"
+//const getDetectionUrl = "http://127.0.0.1:8000/api/getdetection"
+const detectUrl = "https://vast-beyond-27788.herokuapp.com/api/detect"
+const detectStateUrl = "https://vast-beyond-27788.herokuapp.com/api/detectstate"
+const registerUserUrl = "https://vast-beyond-27788.herokuapp.com/api/registeruser"
+const loginUserUrl = "https://vast-beyond-27788.herokuapp.com/api/loginuser"
+const registerDetectionUrl = "https://vast-beyond-27788.herokuapp.com/api/registerdetection"
+const getDetectionUrl = "https://vast-beyond-27788.herokuapp.com/api/getdetection"
 
-const baseURL4 = "http://127.0.0.1:8000/api/"
-const baseURL3 = 'https://django-stockrcgnt.herokuapp.com/api/'
-const baseURL5 = 'https://django-stockrcgnt-production.up.railway.app/api/detect'
-//const baseURL = 'https://django-stckrcgnt.vercel.app/api/
-const djangoURL = 'http://localhost:8000/detect'
 
 export async function getUsers(): Promise<any> {
     //const token = document.cookie.split('token=')[1]
@@ -25,19 +26,6 @@ export async function getUsers(): Promise<any> {
         // We convert the React state to JSON and send it as the POST body
         //headers: { 'Content-Type': 'application/json', 'authorization' : token },
         headers: { 'Content-Type': 'application/json' }
-    })
-        .then(res => res.json()) //returns array of data
-        .then(res => { console.log(res.data); value = res.data }); //assign state to array res
-
-    return value
-}
-
-
-export async function getjango(): Promise<any> {
-    //const token = document.cookie.split('token=')[1]
-    let value = ""
-    await fetch(baseURL3, {
-        method: 'GET',
     })
         .then(res => res.json()) //returns array of data
         .then(res => { console.log(res.data); value = res.data }); //assign state to array res

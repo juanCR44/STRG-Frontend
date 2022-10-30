@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import $ from 'jquery';
 import { useNavigate } from "react-router-dom";
-import { detect, detectState, getdetection, getjango, registerDetection } from "../controller/getmodel";
+import { detect, detectState, getdetection, registerDetection } from "../controller/getmodel";
 import Detection from "../constants/detection";
 import moment from 'moment';
 
@@ -508,12 +508,7 @@ const Home = () => {
         setDimage(image)
         setDidSelectRegistered(true)
     }
-
-    async function testing() {
-        let a = await getjango();
-        console.log(a)
-    }
-
+    
     async function onChangeDate(e: any) {
         setObject([])
         setFullcount(0)
