@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { detect, detectState, getdetection, registerDetection } from "../controller/getmodel";
 import Detection from "../constants/detection";
 import moment from 'moment';
+import LoadingEffect from "../components/loading";
 
 const Home = () => {
     let navigate = useNavigate();
@@ -14,7 +15,7 @@ const Home = () => {
     const [showState, setShowState] = useState<boolean>(false)
     const [showTypes, setShowTypes] = useState<boolean>(false)
     const [showTypeRegistered, setShowTypeRegistered] = useState<boolean>(false)
-    const [productType, setProducType] = useState<string>('')
+    const [productType, setProducType] = useState<string>()
     const [productTypeJson, setProducTypeJson] = useState<string>('')
     const [stateProduct, setStateProduct] = useState<String>('')
     const [didSelectRegistered, setDidSelectRegistered] = useState<boolean>(false)
@@ -31,6 +32,8 @@ const Home = () => {
     const [dimage, setDimage] = useState<any>()
     const [showGoodState, setShowGoodState] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
+    const [uploading, setUploading] = useState<boolean>(false)
+    const [fixed, setFixed] = useState<string>('no')
 
     const [uploadedImage, setUploadedImage] = useState<File>()
 
@@ -336,10 +339,32 @@ const Home = () => {
 
     async function detectUploaded(e: any) {
         let file = e.target.files[0]
+        if (!($('.menu-tablet').is(':visible'))) {
+            setFixed('si')
+        }
+        else{
+            setFixed('no')
+        }
+        setTimeout(() => {
+            $('.fw').css("background-color", "#2b375a")
+            $('.return').css("background-color", "#003a7c")
+            $('.return').css("color", "white")
+            $('.fw').css("color", "white")
+            $('.p-big').css("color", "#002b53")
+            if (!($('.menu-tablet').is(':visible'))) {
+                $('.borderright').css("border-bottom", "1px solid #e1e1e1")
+            }
+            else {
+                $('.borderright').css("border-right", "1px solid #e1e1e1")
+            }
+            $('.navbar').css("background-image", "linear-gradient(to bottom, #003a7c, #093280)")
+        }, 10);
         setImagesYoloCroppedBad([])
         setImagesYoloCroppedGood([])
         setCount(0)
-        
+
+
+        setLoading(true)
         $('.cu-left').addClass('active')
         $('.cu-right').removeClass('active')
         setShowGoodState(true)
@@ -388,11 +413,16 @@ const Home = () => {
         setShowDetect(true)
         setShowYolo(true)
         e.target.value = ''
+
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000);
     }
 
     function goBack() {
         console.log(showYolo, showState)
         $('.message-load').removeClass('active')
+
         if (showState) {
             setShowState(false)
             setShowYolo(true)
@@ -414,13 +444,33 @@ const Home = () => {
         if (showTypeRegistered) {
             setShowTypeRegistered(false)
             setShowTypes(true)
+            setTimeout(() => {
+                $('.fw').css("background-color", "#2b375a")
+                $('.return').css("background-color", "#003a7c")
+                $('.return').css("color", "white")
+                $('.fw').css("color", "white")
+                $('.p-big').css("color", "#002b53")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid #e1e1e1")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid #e1e1e1")
+                }
+                $('.navbar').css("background-image", "linear-gradient(to bottom, #003a7c, #093280)")
+            }, 10);
             return
         }
     }
 
     async function registrarProducto() {
         if (imagesYoloCroppedBad.length > 0 || imagesYoloCroppedGood.length > 0) {
-            setLoading(true)
+            if (!($('.menu-tablet').is(':visible'))) {
+                setFixed('si')
+            }
+            else{
+                setFixed('no')
+            }
+            setUploading(true)
             const totalImages = imagesYoloCroppedGood.concat(imagesYoloCroppedBad)
             const totalLabel = namesGood.concat(namesBad)
 
@@ -446,8 +496,8 @@ const Home = () => {
             $('.message-load').addClass('active')
             setTimeout(() => {
                 goBack()
-                setLoading(false)
-            }, 2000);
+                setUploading(false)
+            }, 500);
         }
         else {
             return alert("No hay detecciones")
@@ -468,26 +518,110 @@ const Home = () => {
         if (type == 'sanmateo') {
             setProducType('San Mateo')
             setProducTypeJson('SanMateo_2.5L')
+            setTimeout(() => {
+                $('.fw').css("background-color", "#0286be")
+                $('.return').css("background-color", "#0286be")
+                $('.return').css("color", "white")
+                $('.fw').css("color", "white")
+                $('.p-big').css("color", "#0286be")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid #0286be")
+                    $('.navbar').css("background-image", "linear-gradient(to bottom, #0286be, #0286be)")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid #0286be")
+                }
+            }, 10);
         }
         if (type == 'inca') {
             setProducType('Inca Kola')
             setProducTypeJson('IncaKola_1.5L')
+            setTimeout(() => {
+                $('.fw').css("background-color", "yellow")
+                $('.return').css("background-color", "yellow")
+                $('.return').css("color", "black")
+                $('.fw').css("color", "black")
+                $('.p-big').css("color", "#f3f31c")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid yellow")
+                    $('.navbar').css("background-image", "linear-gradient(to bottom, yellow, yellow)")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid yellow")
+                }
+            }, 10);
         }
         if (type == 'cielo') {
             setProducType('Cielo')
             setProducTypeJson('Cielo_2.5L')
+            setTimeout(() => {
+                $('.fw').css("background-color", "#1bbedd")
+                $('.return').css("background-color", "#1bbedd")
+                $('.return').css("color", "white")
+                $('.fw').css("color", "white")
+                $('.p-big').css("color", "#1bbedd")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid #1bbedd")
+                    $('.navbar').css("background-image", "linear-gradient(to bottom, #1bbedd, #1bbedd)")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid #1bbedd")
+                }
+            }, 10);
         }
         if (type == 'monster') {
             setProducType('Monster Original')
             setProducTypeJson('MonsterOriginal_473ml')
+            setTimeout(() => {
+                $('.fw').css("background-color", "black")
+                $('.return').css("background-color", "#8cbc4b")
+                $('.return').css("color", "white")
+                $('.fw').css("color", "white")
+                $('.p-big').css("color", "#8cbc4b")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid #8cbc4b")
+                    $('.navbar').css("background-image", "linear-gradient(to bottom, #8cbc4b, #8cbc4b)")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid #8cbc4b")
+                }
+            }, 10);
         }
         if (type == 'redbull') {
             setProducType('Redbull')
             setProducTypeJson('RedBull_250ml')
+            setTimeout(() => {
+                $('.fw').css("background-color", "#d3091f")
+                $('.return').css("background-color", "#1441a1")
+                $('.return').css("color", "white")
+                $('.fw').css("color", "white")
+                $('.p-big').css("color", "#1441a1")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid #1441a1")
+                    $('.navbar').css("background-image", "linear-gradient(to bottom, #1441a1, #1441a1)")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid #1441a1")
+                }
+            }, 10);
         }
         if (type == 'monster_sa') {
             setProducType('Monster sin Azucar')
             setProducTypeJson('MonsterZeroSugar_473ml')
+            setTimeout(() => {
+                $('.fw').css("background-color", "black")
+                $('.return').css("background-color", "#97edfd")
+                $('.return').css("color", "black")
+                $('.fw').css("color", "white")
+                $('.p-big').css("color", "#97edfd")
+                if (!($('.menu-tablet').is(':visible'))) {
+                    $('.borderright').css("border-bottom", "1px solid #97edfd")
+                    $('.navbar').css("background-image", "linear-gradient(to bottom, #97edfd, #97edfd)")
+                }
+                else {
+                    $('.borderright').css("border-right", "1px solid #97edfd")
+                }
+            }, 10);
         }
 
     }
@@ -508,7 +642,7 @@ const Home = () => {
         setDimage(image)
         setDidSelectRegistered(true)
     }
-    
+
     async function onChangeDate(e: any) {
         setObject([])
         setFullcount(0)
@@ -548,7 +682,7 @@ const Home = () => {
             <div className="stockrecognition-body2">
                 <div className="container-full">
                     <div className="navbar">
-                        <h1 className="logo">Stock Recognition</h1>
+                        <h1 className="logo">StockRecognition</h1>
                         <div className="navbar-redirect">
                             <ul className='redirect-links'>
                                 {/*<li><a className='link-item' href="/">Modificar perfil</a></li>*/}
@@ -592,9 +726,9 @@ const Home = () => {
                             </div>
                         </div>
                         <div className="product-type-list">
-                            <span className="message-load">
+                            {/*<span className="message-load">
                                 Detección registrada <i className="uil uil-check-circle"></i>
-                            </span>
+</span>*/}
                             <p onClick={() => goBack()} className="return">Atrás</p>
                             <i className="uil uil-times"></i>
                             <img className="product-image-full" src={imageYolo} alt="" />
@@ -606,17 +740,17 @@ const Home = () => {
                                                 <div className="left centered flex flexcolumn gap borderright">
                                                     <span className="spantitle">Botellas</span>
                                                     <div className="product-type-item">
-                                                        <img onClick={() => getTypeRegistered("inca")} src="image/incak.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("sanmateo")} src="image/sanmateo.png" alt="" />
-                                                        <img onClick={() => getTypeRegistered("cielo")} src="image/cielo.png" alt="" />
+                                                        <img onClick={() => getTypeRegistered("inca")} src="image/inca2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("sanmateo")} src="image/sanmateo2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("cielo")} src="image/cielo2.jpeg" alt="" />
                                                     </div>
                                                 </div>
                                                 <div className="right centered flex flexcolumn gap">
                                                     <span className="spantitle">Latas</span>
                                                     <div className="product-type-item">
-                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/redbull.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("monster_sa")} src="image/msa2.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("monster")} src="image/monster.jpg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/redbull2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("monster_sa")} src="image/msa2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("monster")} src="image/m2.jpeg" alt="" />
                                                     </div>
                                                 </div>
                                             </div>))
@@ -694,7 +828,7 @@ const Home = () => {
                                         (
                                             <>
                                                 {
-                                                    showYolo && (
+                                                    (showYolo && !loading) && (
                                                         <div className="row centered verify-yolo">
                                                             <div className="left centered flex flexcolumn gap borderright padding-image">
                                                                 <img className="product-image" src={imageYolo} alt="" />
@@ -749,11 +883,18 @@ const Home = () => {
                                                                     </div>
                                                                 </div>
 
-                                                                {!loading && <span onClick={() => registrarProducto()} className="button button-dashboard button-tablet">Registrar detección</span>}
-                                                                {loading && <i className="uil uil-spinner-alt"></i>}
+                                                                {/*!loading && <span onClick={() => registrarProducto()} className="button button-dashboard button-tablet">Registrar detección</span>}
+                                                                {loading && <i className="uil uil-spinner-alt"></i>*/}
+                                                                <span onClick={() => registrarProducto()} className="button button-dashboard button-tablet noupper">Registrar detección</span>
+                                                                {uploading && <LoadingEffect text={'Guardando resultados'} pos= {false} fixed = {fixed}/>}
 
                                                             </div>
                                                         </div>
+                                                    )
+                                                }
+                                                {
+                                                    (showYolo && loading) && (
+                                                        <LoadingEffect text={'Detectando productos subidos'} pos= {false} fixed = {fixed}/>
                                                     )
                                                 }
                                                 {
@@ -826,17 +967,17 @@ const Home = () => {
                                                 <div className="left centered flex flexcolumn gap borderright">
                                                     <span className="spantitle">Botellas</span>
                                                     <div className="product-type-item">
-                                                        <img onClick={() => getTypeRegistered("inca")} src="image/incak.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("sanmateo")} src="image/sanmateo.png" alt="" />
-                                                        <img onClick={() => getTypeRegistered("cielo")} src="image/cielo.png" alt="" />
+                                                        <img onClick={() => getTypeRegistered("inca")} src="image/inca2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("sanmateo")} src="image/sanmateo2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("cielo")} src="image/cielo2.jpeg" alt="" />
                                                     </div>
                                                 </div>
                                                 <div className="right centered flex flexcolumn gap">
                                                     <span className="spantitle">Latas</span>
                                                     <div className="product-type-item">
-                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/redbull.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("monster_sa")} src="image/msa2.jpg" alt="" />
-                                                        <img onClick={() => getTypeRegistered("monster")} src="image/monster.jpg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("redbull")} src="image/redbull2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("monster_sa")} src="image/msa2.jpeg" alt="" />
+                                                        <img onClick={() => getTypeRegistered("monster")} src="image/m2.jpeg" alt="" />
                                                     </div>
                                                 </div>
                                             </div>))
@@ -913,9 +1054,9 @@ const Home = () => {
                                         (
                                             <>
                                                 {
-                                                    showYolo && (
+                                                    (showYolo && !loading) && (
                                                         <div className="row centered verify-yolo">
-                                                            <div className="left centered flex flexcolumn gap borderright padding-image godown">
+                                                            <div className="left centered flex flexcolumn gap borderright padding-image">
                                                                 <img className="product-image" src={imageYolo} alt="" />
                                                             </div>
                                                             <div className="right centered flex flexcolumn gap">
@@ -950,7 +1091,6 @@ const Home = () => {
                                                                             </div>
                                                                             <div className="card-down">
                                                                                 <div className="products-detected">
-
                                                                                     {showGoodState && imagesYoloCroppedGood && imagesYoloCroppedGood.map((image: any, index: any) => {
                                                                                         return (<div onClick={(e) => setProduct(e)} className="product-detected-cropped" key={index}>
                                                                                             <img className="cropped-size" src={image} alt="" />
@@ -968,9 +1108,16 @@ const Home = () => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
+
                                                                 <span onClick={() => registrarProducto()} className="button button-dashboard button-tablet">Registrar detección</span>
+                                                                {uploading && <LoadingEffect text={'Guardando resultados'} pos= {false} fixed = {fixed}/>}
                                                             </div>
                                                         </div>
+                                                    )
+                                                }
+                                                {
+                                                    (showYolo && loading) && (
+                                                        <LoadingEffect text={'Detectando productos'} pos= {false} fixed = {fixed}/>
                                                     )
                                                 }
                                                 {

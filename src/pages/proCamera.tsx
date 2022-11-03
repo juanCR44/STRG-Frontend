@@ -4,6 +4,8 @@ import { createSearchParams, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { detect } from "../controller/getmodel";
 
+import LoadingEffect from "../components/loading";
+
 const Procamera = () => {
   const camera = useRef<any>(null);
   const [image, setImage] = useState<any>(null);
@@ -75,9 +77,7 @@ const Procamera = () => {
               <i onClick={() => switchCam(camera)} className="uil uil-camera-change"></i>
             </>
           ) : (
-            <>
-              CARGANDO!!.....
-            </>
+            <LoadingEffect text={'Detectando productos'} pos = {true} fixed = {'no'}/>
           )
       }
     </div>
